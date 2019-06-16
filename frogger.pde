@@ -5,12 +5,15 @@ final int rows    = 16;
 final int cols    = 10;
 final int dx      = WIDTH / cols;
 final int dy      = HEIGHT / rows;
-final boolean DEBUG = true;
+final boolean DEBUG = false;
 
 float waterSpeed;
-PImage water, frog, goal;
-Car[] cars;
+PImage water, goal;
+PImage[] car_images;
+Frog frog;
 Animation police, ambulance;
+ArrayList<Car> cars;
+
 
 
 void setup() {
@@ -21,14 +24,22 @@ void setup() {
   waterSpeed = 0;
   water = loadImage("water.png");
   water.resize(300, 300);
-  frog = loadImage("frog.png");
-  frog.resize(dx, dy);
   goal = loadImage("heart.png");
   goal.resize(dx,dy);
   
+  loadFrog();
   loadCars();
   loadAnimatedCars();
 }
+
+
+
+void loadFrog() {
+  int x = (int) random(1, 10);
+  frog = new Frog(dx, dy, dx * x, 750 - dy * (int) random(0, 1.9));
+  if (DEBUG) println(frog.getXpos(), frog.getYpos());
+}
+
 
 
 void generateBackground() {
@@ -46,10 +57,7 @@ void generateBackground() {
       alt = !alt; 
     } 
   }
-  
-  // Goal
-  image(goal, dx*1, 0); image(goal, dx*3, 0); image(goal, dx*6, 0); image(goal, dx*8, 0);
-  
+    
   // Road
   fill(169,169,169);
   rect(0, 400, WIDTH, 300);
@@ -60,22 +68,26 @@ void generateBackground() {
     image(water, i + waterSpeed, 0);;
   if (waterSpeed >= WIDTH / 2) waterSpeed = 0;
   
+  // Goal
+  image(goal, dx*1, interpolate(0, 4, 2500, 0.5)); image(goal, dx*3, interpolate(0, 6, 2000, 0.5)); 
+  image(goal, dx*6, interpolate(0, 5, 2500, 0.5)); image(goal, dx*8, interpolate(0, 3, 2500, 0.5));
 }
+
 
 
 void draw() {
   noStroke();
   
   generateBackground();
-  tint(150, 0, 75);
-  image(frog, 300, 600);
-  tint(255);
+  frog.display();
+  handleCars();
   
+
   if (mousePressed) {
-    cars[6].display(mouseX, mouseY);
+    police.display(mouseX, mouseY);
   }
   
-  
+
   if (DEBUG) {
     stroke(255,20,147);
     line(0,000,WIDTH,000);
@@ -92,7 +104,16 @@ void draw() {
       if (i == HEIGHT / 2) stroke(0); else stroke(255,255,0);
       line(0, i, WIDTH, i);
     }
-    
   }
   
+}
+
+
+
+/* Interpolates between two values
+   Interval - Changes the duration between initial and final
+   verticalOffset - Increases initial and final by the same amount */
+int interpolate(int initial_val, int final_val, int interval, float verticalOffset) {
+  float function = sin(PI * round(millis()) / interval) + verticalOffset;
+  return floor(initial_val + function * (final_val - initial_val));
 }
