@@ -10,9 +10,11 @@ final boolean DEBUG = false;
 float waterSpeed;
 PImage water, goal;
 PImage[] car_images;
+PImage[] log_images;
 Frog frog;
 Animation police, ambulance;
 ArrayList<Car> cars;
+ArrayList<Log> logs;
 
 
 
@@ -30,13 +32,49 @@ void setup() {
   loadFrog();
   loadCars();
   loadAnimatedCars();
+  loadLogs();
+}
+
+
+
+void draw() {
+  noStroke();
+  
+  generateBackground();
+  handleLogs();
+  frog.display();
+  handleCars();
+  
+
+  if (DEBUG && mousePressed) {
+    police.display(mouseX, mouseY);
+  }
+  
+
+  if (DEBUG) {
+    stroke(255,20,147);
+    line(0,000,WIDTH,000);
+    line(0,300,WIDTH,300);
+    line(0,400,WIDTH,400);
+    line(0,700,WIDTH,700);
+    
+    for (int i = 0; i <= WIDTH; i += dx) {
+      if (i == WIDTH / 2) stroke(0); else stroke(255,20,147);
+      line(i, 0, i, HEIGHT);
+    }
+    
+    for (int i = 0; i <= HEIGHT; i += dy) {
+      if (i == HEIGHT / 2) stroke(0); else stroke(255,255,0);
+      line(0, i, WIDTH, i);
+    }
+  }
+  
 }
 
 
 
 void loadFrog() {
-  int x = (int) random(1, 10);
-  frog = new Frog(dx, dy, dx * x, 750 - dy * (int) random(0, 1.9));
+  frog = new Frog(dx - 5, dy - 5, dx * (int) random(1, 10), 750 - dy * (int) random(0, 1.9));
   if (DEBUG) println(frog.getXpos(), frog.getYpos());
 }
 
@@ -75,37 +113,13 @@ void generateBackground() {
 
 
 
-void draw() {
-  noStroke();
-  
-  generateBackground();
-  frog.display();
-  handleCars();
-  
-
-  if (mousePressed) {
-    police.display(mouseX, mouseY);
-  }
-  
-
-  if (DEBUG) {
-    stroke(255,20,147);
-    line(0,000,WIDTH,000);
-    line(0,300,WIDTH,300);
-    line(0,400,WIDTH,400);
-    line(0,700,WIDTH,700);
-    
-    for (int i = 0; i <= WIDTH; i += dx) {
-      if (i == WIDTH / 2) stroke(0); else stroke(255,20,147);
-      line(i, 0, i, HEIGHT);
-    }
-    
-    for (int i = 0; i <= HEIGHT; i += dy) {
-      if (i == HEIGHT / 2) stroke(0); else stroke(255,255,0);
-      line(0, i, WIDTH, i);
-    }
-  }
-  
+void keyPressed() {
+  if (key == 'w') frog.move(0, -1 * dy);
+  if (key == 'a') frog.move(-1 * dx, 0);
+  if (key == 'd') frog.move(dx, 0);
+  if (key == 's') frog.move(0, dy);
+  if (key == 'r') loadFrog();
+  if (DEBUG) println(frog.getXpos(), frog.getYpos());
 }
 
 

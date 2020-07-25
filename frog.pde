@@ -2,7 +2,7 @@
 class Frog {
  PImage image;
  int width, height;
- int xpos, ypos;
+ float xpos, ypos;
   
  Frog(int resize_x, int resize_y, int x, int y) {
   image = loadImage("frog.png");
@@ -11,15 +11,11 @@ class Frog {
   xpos = x; ypos = y;
  }
  
- void display() {
-    //imageMode(CENTER);
-    image(image, xpos, ypos);
-    //imageMode(CORNER);
-  }
+ void display() { image(image, xpos, ypos); }
   
   void move(int x, int y) {
     if (withinBounds(x,y)) {
-      xpos += x;
+      xpos = xpos + x;
       ypos += y;
     }
   }
@@ -32,13 +28,13 @@ class Frog {
  
  
  // Setters
- void setXpos(int x) { xpos = x; }
- void setYpos(int y) { ypos = y; }
+ void setXpos(float x) { xpos = x; }
+ void setYpos(float y) { ypos = y; }
  
  
  // Getters
- int getXpos() { return xpos; }
- int getYpos() {return ypos; }
- int getWidth() { return width; }
- int getHeight() {return height; }
+ float getXpos() { return xpos; }
+ float getYpos() { return ypos; }
+ int getWidth()  { return width; }
+ int getHeight() { return height; }
 }

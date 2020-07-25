@@ -10,11 +10,11 @@ class Car {
   
   Car(PImage img, int resize_x, int resize_y, int start_x, int start_y, String dir, float spd, int strt){
     image = img;
-    image.resize(resize_x,resize_y);
+    image.resize(resize_x, resize_y);
     width = resize_x; height = resize_y;  
     xpos = start_x; ypos = start_y;
     heading = dir;
-    distLeft = WIDTH + width;
+    distLeft = WIDTH + 2 * width;
     speed = spd;
     lane = strt;
   }
@@ -44,18 +44,18 @@ class Car {
   boolean isGone() { return distLeft <= 0; }
 
   // Getters
-  int getLane() { return lane; }
-  int getXpos() { return xpos; }
-  int getYpos() {return ypos; }
-  int getWidth() { return width; }
-  int getHeight() {return height; }
+  int getLane()   { return lane; }
+  int getXpos()   { return xpos; }
+  int getYpos()   { return ypos; }
+  int getWidth()  { return width; }
+  int getHeight() { return height; }
 }
 
 
 
 // Spawns new cars and checks collision with frog
 void handleCars() {
-  float speed = random(5, 11);
+  float speed = random(5, 15);
   int carNum = (int) random(0, 7);
   IntList lanes = new IntList();
   int laneNum = 6;    // 6 lanes, ordered top to bottom
@@ -75,12 +75,10 @@ void handleCars() {
       
       int laneY = 420 + dy * (i - 1);
       if ((int) random(0, 2) == 0)
-        cars.add(new Car(car_images[carNum], w, h, WIDTH, laneY, "left", speed, i));
-      else {
-        //rotate(HALF_PI);
-        cars.add(new Car(car_images[carNum], w, h, 0, laneY, "right", speed, i));
-      }
-      speed = random(5, 11);
+        cars.add(new Car(car_images[carNum], w, h, WIDTH + w, laneY, "left", speed, i));
+      else cars.add(new Car(car_images[carNum], w, h, -1 * w, laneY, "right", speed, i));
+      
+      speed = random(5, 15);
       carNum = (int) random(0, 7);
     }
   }
@@ -88,24 +86,22 @@ void handleCars() {
   // Remove off screen cars and display the rest
   for (int i = cars.size() - 1; i >= 0; i--) {
     Car curr = cars.get(i);
-    if (curr.isGone()) {
-      cars.remove(i);
-    }
+    if (curr.isGone()) cars.remove(i); 
     else curr.display();
   }
   
   // Check collisions
-  int frogX = frog.getXpos(), frogY = frog.getYpos();        // X = left side of frog, Y = top of frog
-  if (frogY >= WIDTH / 2) {   // Frog is on the road
+  //int frogX = frog.getXpos(), frogY = frog.getYpos();        // X = left side of frog, Y = top of frog
+  //if (frogY >= HEIGHT / 2) {   // Frog is on the road
     
-    for (Car curr : cars) {  // Check each car
-      int carX = curr.getXpos() - curr.getWidth() / 2, carY = curr.getYpos() - 20; // X = left of car, Y = top of car
-      if (carY == frogY) {  // Frog is in the car's lane
-        if (frogX >= carX - 25 && frogX <= carX + curr.getWidth() - 25) loadFrog();  // Subtract for extra transparent space
-      }
-    }
+  //  for (Car curr : cars) {  // Check each car
+  //    int carX = curr.getXpos() - curr.getWidth() / 2, carY = curr.getYpos() - 20; // X = left of car, Y = top of car
+  //    if (carY == frogY) {  // Frog is in the car's lane
+  //      if (frogX >= carX - 25 && frogX <= carX + curr.getWidth() - 25) loadFrog();  // Subtract for extra transparent space
+  //    }
+  //  }
+  //}
   
-  }
 }
 
 
@@ -127,9 +123,9 @@ void loadAnimatedCars() {
   ambulance_pics = new PImage[3];
   
   for (int i = 0; i < 3; i++) {
-    police_car[i] = loadImage("police_car/" + (i+1) + ".png");
+    police_car[i] = loadImage("cars/police_car/" + (i+1) + ".png");
     //police_car[i].resize(round(2 * dx), round(dy * 2));
-    ambulance_pics[i] = loadImage("ambulance/" + (i+1) + ".png");
+    ambulance_pics[i] = loadImage("cars/ambulance/" + (i+1) + ".png");
     //ambulance_pics[i].resize(round(2.2 * dx), round(dy * 2.7));
   }
 
